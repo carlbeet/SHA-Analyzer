@@ -1,5 +1,10 @@
 # SHA-Analyzer
 
+Useful links for our super awesome team:
+SHA-256 step through & pseudocode: https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/
+git commands: https://gist.github.com/davfre/8313299
+password database: https://github.com/duyet/bruteforce-database
+
 We will read in passwords from a text file, loop through the data to encrypt each password first with SHA-1 and then with SHA-256 and store it into a map of keys & encrypted passwords and a vector of decoded passwords, implementing a library to capture the time of each algorithm ie. std::chrono.
 
 *SHA-1:*
