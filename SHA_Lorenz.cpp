@@ -60,13 +60,13 @@ map<string, string> SHA2(map<string, string>& passwords) {
         for (unsigned int i = 0; i < chunks; i++) {
             string chunkStr = binaryInput.substr(i * 512, 64);
             cout << chunkStr << endl;
+            // step 5: create message schedule
+
+            // step 6: compression
+
+            // step 7: modify final values
+
         }
-
-        // step 5: create message schedule
-
-        // step 6: compression
-
-        // step 7: modify final values
 
         // step 8: concatenate final hash
 
