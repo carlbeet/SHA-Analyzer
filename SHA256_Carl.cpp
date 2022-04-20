@@ -121,7 +121,7 @@ unsigned long h7 = 0x5be0cd19;
 
 	for(int i = 0; i <= 15; i++)
 	{
-		words[i] = ms[i] & 0xFFFFFFFF;
+		words[i] = ms[i] & 0xFFFFFFFF; //& with OxFFFFFFFF makes sure any bits over the 32 are zeroed out
     }
 	for(int i = 16; i <= 63; i++)
 	{//NIST
@@ -144,11 +144,17 @@ unsigned long h7 = 0x5be0cd19;
 	unsigned long g = h6;
 	unsigned long h = h7;
 
-    for (int i = 0; i < 63; i ++) { 
-        temp1 = h + f2(a) + ch(a,b,c) + k[i] + words[i];
-        temp2 = 
-
-
+    for (int i = 0; i < 63; i ++) {     
+        temp1 = h + f2(e) + ch(e,f,g) + k[i] + words[i];
+        temp2 = f1(a) + maj(a,b,c);
+        h = g
+        g = f
+        f = e
+        e = d + temp1
+        d = c
+        c = b
+        b = a
+        a = temp1 + temp2
 
     }
 //     for i from 0 to 63
@@ -169,6 +175,29 @@ unsigned long h7 = 0x5be0cd19;
 
 return ;
 }
+
+//afterwards: 
+h0 = h0 + a 
+h1 = h1 + b 
+h2 = h2 + c 
+h3 = h3 + d 
+h4 = h4 + e 
+h5 = h5 + f 
+h6 = h6 + g
+h7 = h7 + h
+string show_as_hex(unsigned long input)
+{
+	bitset<32> bs(input);
+	unsigned n = bs.to_ulong();
+
+	stringstream sstream;
+	sstream << std::hex << std::setw(8) << std::setfill('0') << n;
+	string temp;
+	sstream >> temp;
+
+	return temp;
+}
+
 //512 bit broken into blocks of 8-bit ASCII chars
 // we will use unsigned longs to compute the hash 
 //Prepare the message schedule
@@ -324,6 +353,15 @@ ss << hex << bits.to_ulong() << endl;
 return ss.str();
 
 }
+string longtoHex(unsigned long binarynum) { //pass around binary as strings, convert to and from bitset.
+// input: binary string
+// output: string of hex value 
+bitset<32> bits(binary_string);
+stringstream ss;
+ss << hex << bits.to_ulong() << endl;
+return ss.str();
+
+}
 
 
 void displayShift(int n) { // n number of shifts
@@ -372,8 +410,6 @@ return binary_str;
 
 
 int main() {
-
-
 
 string bin = "011010000110010101";
 string b2 = padMessage512(bin);
