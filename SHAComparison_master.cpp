@@ -77,16 +77,16 @@ int main()
 
     // read in 10 separate files of passwords
     // our source could only generate about 10k passwords per csv file
-    readFile("passwords1.csv", passwords);
-    readFile("passwords2.csv", passwords);
-    readFile("passwords3.csv", passwords);
-    readFile("passwords4.csv", passwords);
-    readFile("passwords5.csv", passwords);
-    readFile("passwords6.csv", passwords);
-    readFile("passwords7.csv", passwords);
-    readFile("passwords8.csv", passwords);
-    readFile("passwords9.csv", passwords);
-    readFile("passwords10.csv", passwords);
+    readFile("data/passwords1.csv", passwords);
+    readFile("data/passwords2.csv", passwords);
+    readFile("data/passwords3.csv", passwords);
+    readFile("data/passwords4.csv", passwords);
+    readFile("data/passwords5.csv", passwords);
+    readFile("data/passwords6.csv", passwords);
+    readFile("data/passwords7.csv", passwords);
+    readFile("data/passwords8.csv", passwords);
+    readFile("data/passwords9.csv", passwords);
+    readFile("data/passwords10.csv", passwords);
     cout << "Files successfully read." << endl;
 
     // vector RoundConstants
