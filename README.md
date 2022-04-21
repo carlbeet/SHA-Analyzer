@@ -1,7 +1,7 @@
 # SHA-Analyzer
 
 
-DATA ENCRYPTION
+**DATA ENCRYPTION**
 SHA Analyzer
 
 Team: Final Project 98
@@ -26,8 +26,8 @@ From the SHA-2 family of algorithm, this hashing function creates a 256-bit dige
 If there are infinitely many passwords and only 2^160 unique hashes, there are guaranteed collisions. The SHA-1 algorithm has been broken since its inception in 1995, but it is still widely used for hashing passwords. The safe industry standard is SHA-256, which has no known collisions. However, it is still essential to use a unique salt to safely implement this algorithm. <br />
 
 *Attacks:* <br />
-Hackers may wish to steal passwords by finding the string that generates the hash.
-a. Dictionary Attacks
-  This is the brute force method of password hacking, wherein the attacker tries every possible combination. It takes a lot of time and resources to run this kind of attack, but it will be successful if entries are not salted.
-b. Rainbow Tables
-  Time space tradeoff using reduction functions. Makes hash lookup much quicker through a chaining mechanism.
+Hackers may wish to steal passwords by finding the string that generates the hash.  <br />
+a. **Dictionary Attacks**  <br />
+  This is the brute force method of password hacking, wherein the attacker tries every possible combination. It takes a lot of time and resources to run this kind of attack, but it will be successful if entries are not salted. <br />
+b. **Rainbow Tables**  <br />
+  Time space tradeoff using reduction functions. Makes hash lookup much quicker through a chaining mechanism.  <br />
