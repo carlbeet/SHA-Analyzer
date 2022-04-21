@@ -30,14 +30,12 @@ int main()
     map<string, string> sha_1 = SHA1(passwords);
 
     cout << "New passwords:" << endl;
-    for (auto iter = sha_1.begin(); iter != sha_1.end(); iter++)
-    {
+    for (auto iter = sha_1.begin(); iter != sha_1.end(); iter++) {
         cout << iter->second << endl;
     }
 }
 
-void readFile(string filename, map<string,string>& passwords) 
-{
+void readFile(string filename, map<string,string>& passwords) {
     string username; 
     string password; 
     ifstream file(filename);
@@ -53,8 +51,7 @@ void readFile(string filename, map<string,string>& passwords)
     }
 }
 
-map<string, string> SHA1(map<string, string>& passwords)
-{
+map<string, string> SHA1(map<string, string>& passwords) {
     map<string, string> encrypted;
     //iterate through passwords map
         //SHA-1 algorithm
@@ -72,8 +69,7 @@ map<string, string> SHA1(map<string, string>& passwords)
             //9. add ABCDE to original hex strings
         //10. final string = HH
 
-    for (auto iter = passwords.begin(); iter != passwords.end(); ++iter)
-    {
+    for (auto iter = passwords.begin(); iter != passwords.end(); ++iter) {
         string password = iter->second;
         string H0 = "67DE2A01";
         string H1 = "BB03E28C";
@@ -92,14 +88,12 @@ map<string, string> SHA1(map<string, string>& passwords)
         int numChars = password.size(); //password.size() max = 56 characters
         int origSize = password.size();
 
-        for (int i = 0; i < password.size(); i++) //convert every character in the password to binary and insert into vector
-        {
+        for (int i = 0; i < password.size(); i++) //convert every character in the password to binary and insert into vector {
             char character = password.at(i);
             binary.push_back(bitset<8>(character));
         }
 
-        if (numChars < 56)
-        {
+        if (numChars < 56) {
             binary.push_back(bitset<8>("10000000"));
             numChars++;
             while (numChars < 56)
@@ -109,8 +103,7 @@ map<string, string> SHA1(map<string, string>& passwords)
             }
         }
 
-        for (int i = 0; i < 7; i++) //padding before the length is added
-        {
+        for (int i = 0; i < 7; i++) { //padding before the length is added 
             binary.push_back(bitset<8>("00000000"));
         }
 
@@ -120,8 +113,7 @@ map<string, string> SHA1(map<string, string>& passwords)
 
         int numBinary = binary.size();
 
-        for (int i = 0; i < binary.size(); i += 4)
-        {
+        for (int i = 0; i < binary.size(); i += 4) {
             string newWord = "";
             newWord += binary[i].to_string() += binary[i + 1].to_string() += binary[i + 2].to_string() += binary[i + 3].to_string();
             words.push_back(bitset<32>(newWord));
