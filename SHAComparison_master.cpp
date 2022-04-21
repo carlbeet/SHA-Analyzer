@@ -471,7 +471,7 @@ string computeHashValue(vector<unsigned long>& messSched, vector<unsigned long>&
 
     string res = longtoHex(h0) + longtoHex(h1) + longtoHex(h2) + longtoHex(h3) + longtoHex(h4) + longtoHex(h5)
         + longtoHex(h6) + longtoHex(h7);
-    cout << "length of hash: " << res.length() << endl;
+    //cout << "length of hash: " << res.length() << endl;
     return res;
 
 }

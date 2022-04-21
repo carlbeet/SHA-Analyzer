@@ -123,7 +123,7 @@ map<string, string> SHA2(map<string, string>& passwords, vector<unsigned long>& 
         
         for (unsigned int i = 0; i < chunks; i++) {
             string chunkStr = binaryInput.substr(i * 512, (i+1) * 512);
-            cout <<  "============================================================================" << endl;
+            cout <<  "---------------------------------------------------------------" << endl;
             cout << "binary: " << chunkStr << endl;
         
 
@@ -281,6 +281,7 @@ unsigned long w;
  for (int i = 0; i < 16; i++)
         {
             string word = binary_string.substr(32* (i), 32*(i+1));
+            cout << "word: " << word << endl;
             bitset<32> set(word);  
             messageSched.push_back(set.to_ulong()) ;
             cout << "word: " << hex << set.to_ulong() << endl;
