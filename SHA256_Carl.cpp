@@ -92,7 +92,6 @@ string decToHex(long double number)
 string longtoHex(unsigned long input);
 
 
-
 // Step 5:
 //input messageSchedule: 512 bit message divided into 8 bit blocks
 string computeHashValue(vector<unsigned long>& messSched, vector<unsigned long> k) {
