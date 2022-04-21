@@ -58,9 +58,26 @@ map<string, string> SHA2(map<string, string>& passwords) {
         chunks = binaryInput.length() / 512;
         // loop for every chunk
         for (unsigned int i = 0; i < chunks; i++) {
-            string chunkStr = binaryInput.substr(i * 512, 64);
-            cout << chunkStr << endl;
+            string chunkStr = binaryInput.substr(i * 512, (i+1) * 512);
+            cout << "binary: " chunkStr << endl;
             // step 5: create message schedule
+            vector<unsigned long> blocks = getMessageSched(chunkStr);
+            // display the blocks
+            for (int i = 1; i <= blocks.size(); i++) {
+                cout << "BLOCK " << i << ": ";
+                cout << blocks[i];
+
+            }
+            
+
+
+            
+
+
+
+
+
+
 
             // step 6: compression
 
@@ -101,4 +118,284 @@ string preProcessor(string str) {
     binary += lengthBin;
     // pre-processing step complete
     return binary;
+}
+
+#define SHR(str, n) (str >> n)
+#define ROTR(str, n) ((str >> n) | (str << (32-n))) 
+// circular right shift as noted by NIST: (x) = (x >> n) v (x << w - n).
+// The following are the SHA-256 logical functions as defined by NIST
+// bit rotations!
+#define ch(a, b, c) = (a & b) ^ ((~a) & c)
+#define maj(a, b, c) = (a & b) ^ (a & c) ^ (b & c)
+#define f1(a) = (ROTR(a, 2) ^ ROTR(a, 13) ^ ROTR(a, 22)) //ep0
+#define f2(a) = (ROTR(a, 6) ^ ROTR(a, 11) ^ ROTR(a, 25)) //ep1
+#define sig1(a) = (ROTR(a, 7) ^ ROTR(a, 18) ^ SHR(a, 3)) //sig0
+#define sig2(a) = (ROTR(a, 17) ^ ROTR(a, 19) ^ SHR(a, 10)) //sig1
+
+bool isprime(int n) { // O(n)
+    if (n == 2 || n == 3) 
+        return true;
+    else if (n % 2 == 0)
+        return false;
+    for (int i = 3; i*i <= n; i += 2) //check odd numbers up to sqrt(n)
+    { if (n % i == 0) 
+        return false;
+    }
+
+    return true;
+}
+
+string computeHashValue(vector<unsigned long> messSched);
+vector<unsigned long> generateConstants(int count);
+vector<unsigned long> getMessageSched(string binary_string);
+string padMessage512(string binary_str)
+
+string binarytoHex(string binary_string);
+string floattoBinary(float num);
+string decToHex(long double number)
+string longtoHex(unsigned long input);
+
+
+// Step 5:
+//input messageSchedule: 512 bit message divided into 8 bit blocks
+string computeHashValue(vector<unsigned long>& messSched, vector<unsigned long> k) {
+// what we use: 1) a message schedule of sixty-four 32 bit words, 2) eight working variables of 32
+// bits each, and 3) a hash value of 8 32 bit words
+
+ // move the constants generation to parameter
+
+
+//initialize constants
+unsigned long h0 = 0x6a09e667;
+unsigned long h1 = 0xbb67ae85;
+unsigned long h2 = 0x3c6ef372;
+unsigned long h3 = 0xa54ff53a;
+unsigned long h4 = 0x510e527f;
+unsigned long h5 = 0x9b05688c;
+unsigned long h6= 0x1f83d9ab;
+unsigned long h7 = 0x5be0cd19;
+
+//5b. Initialize array of 64 longs to 0
+<unsigned long> words[64] = {0};
+
+	for(int i = 0; i < 16; i++)
+	{
+		words[i] = messSched[i] & 0xFFFFFFFF; //& with OxFFFFFFFF makes sure any bits over the 32 are zeroed out
+    }
+	for(int i = 16; i < 64; i++)
+	{//NIST
+	    words[i] = sig2(words[i-2]) + words[i-7] + sig1(words[i-15]) + words[i-16];
+
+		//32 bits
+		words[i] = words[i] & 0xFFFFFFFF;
+	}
+
+    //Step 6: Compression function ==================================================================
+
+    unsigned long temp1;
+	unsigned long temp2;
+	unsigned long a = h0;
+	unsigned long b = h1;
+	unsigned long c = h2;
+	unsigned long d = h3;
+	unsigned long e = h4;
+	unsigned long f = h5;
+	unsigned long g = h6;
+	unsigned long h = h7;
+
+for (int i = 0; i < 64; i ++) {     
+        temp1 = h + f2(e) + ch(e,f,g) + k[i] + words[i];
+        temp2 = f1(a) + maj(a,b,c);
+        h = g;
+        g = f;
+        f = e;
+        e = (d + temp1) & 0xFFFFFFFF;
+        d = c;
+        c = b;
+        b = a;
+        a = (temp1 + temp2) & 0xFFFFFFFF;
+
+    }
+
+//afterwards: 
+h0 = h0 + a;
+h1 = h1 + b;
+h2 = h2 + c;
+h3 = h3 + d;
+h4 = h4 + e; 
+h5 = h5 + f;
+h6 = h6 + g;
+h7 = h7 + h;
+
+string res = longtoHex(h0) + longtoHex(h1) + longtoHex(h2) + longtoHex(h3) + longtoHex(h4) + longtoHex(h5)
+ + longtoHex(h6) + longtoHex(h7);
+return res;
+}
+
+
+
+//512 bit broken into blocks of 8-bit ASCII chars
+// we will use unsigned longs to compute the hash 
+//Prepare the message schedule
+
+//input: 512 bit string
+// output: vector[16] 32-bit hex digits
+vector<unsigned long> getMessageSched(string binary_string) { //pass in 512 bit binary string
+vector<unsigned long> messageSched; 
+unsigned long w;
+// create 32-bit blocks
+ for (int i = 0; i < 16; i++)
+        {
+            string word = binary_string.substr(32* (i), 32*(i+1));
+            bitset<32> set(word);  
+            messageSched.push_back(set.to_ulong()) ;
+            cout << "word: " << hex << set.to_ulong() << endl;
+            
+        }
+return messageSched;
+}
+
+vector<unsigned long> generateConstants(int count) {
+
+// SHA-256 uses a sequence of sixty-four constant 32-bit words represented as hex values. 
+// words represent the first 32 bits of the fractional parts of the cube roots
+// of the first 64 prime numbers. 
+// Rather than hardcode the constants, we generated them through these functions.
+
+vector<unsigned long> h;
+int n = 0;
+int i = 0;
+while (i < count) {
+if (isprime(n)) {
+    cout << "prime number: " << n << endl;
+    long double p = (long double) n;
+    p = cbrt(p) - floor(cbrt(p)); //"fractional part"
+    cout << "dec part: " << p << endl;
+    //string binary = floattoBinary(p); 
+    //string hex = binarytoHex(binary); //TODO : create binary to hex function. should the binary be 32 bits or the hash? Practice bit shifting too.
+    if (p !=0 )
+    {
+        string hex = decToHex(p);
+        bitset<32> set(hex);
+        // send back unsigned long hexdigits representing the binary of hex string
+        h.push_back(set.to_ulong());
+        ++i; //increment index
+    }
+}
+++n;
+    }
+ return h;
+
+}
+
+string decToHex(long double number) //float/double to hex
+{   
+    number = number * pow(2, 32);
+    long long  n = (long long) (floor(number));
+
+    // ref: https://stackoverflow.com/questions/4674956/what-are-the-first-32-bits-of-the-fractional-part-of-this-float
+    cout << "num: " << n << endl;
+
+    int temp;
+    string hex = "";
+    vector<char> arr;
+
+    if (n == 0){
+    hex = "000000";
+    }
+
+    while (n != 0)
+    {
+        temp = n % 16;
+        if (temp < 10)
+        {
+            arr.push_back(48 + temp);
+        }
+        else
+        {
+            arr.push_back(55 + temp);
+        }
+        n /= 16;
+    }
+
+    for (int i = arr.size() - 1; i >= 0; --i)
+    {
+        hex += arr[i];
+    }
+
+    return hex;
+}
+
+string decToHex(int number) //overloaded method, this one is int to hex
+{   
+    int n = number; //any typecasting should go here.
+    int temp;
+    string hex = "";
+    vector<char> arr;
+
+    if (n == 0){
+    hex = "000000";
+    }
+
+    while (n != 0)
+    {
+        temp = n % 16;
+        if (temp < 10)
+        {
+            arr.push_back(48 + temp);
+        }
+        else
+        {
+            arr.push_back(55 + temp);
+        }
+        n /= 16;
+    }
+
+    for (int i = arr.size() - 1; i >= 0; --i)
+    {
+        hex += arr[i];
+    }
+
+    return hex;
+}
+
+string decToBinary(int number)
+{
+    string temp = "";
+    string binary = "";
+    
+    while (number > 0)
+    {
+        temp += to_string(number % 2);
+        number /= 2;
+    }
+
+    for (int i = temp.size() - 1; i >= 0; i--)
+    {
+        binary += temp[i];
+    }
+
+    return binary;
+}
+
+
+
+string binarytoHex(string binary_string) { //pass around binary as strings, convert to and from bitset.
+// input: binary string
+// output: string of hex value 
+bitset<32> bits(binary_string);
+stringstream ss;
+ss << hex << bits.to_ulong() << endl;
+return ss.str();
+
+}
+string longtoHex(unsigned long input) { //pass around binary as strings, convert to and from bitset.
+// input: binary string
+// output: string of hex value 
+bitset<32> bits(input);
+stringstream ss;
+ss << hex << bits.to_ulong() << endl;
+return ss.str();
+
+
 }

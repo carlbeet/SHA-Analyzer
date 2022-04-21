@@ -55,15 +55,6 @@ return "";
 //=======================================================================================================
 //source: https://csrc.nist.gov/csrc/media/publications/fips/180/2/archive/2002-08-01/documents/fips180-2.pdf
 
-//initialize constants
-string h0 = "0x6a09e667";
-string h1 = "0xbb67ae85";
-string h2 = "0x3c6ef372";
-string h3 = "0xa54ff53a";
-string h4 = "0x510e527f";
-string h5 = "0x9b05688c";
-string h6 = "0x1f83d9ab";
-string h7 = "0x5be0cd19";
 
 #define SHR(str, n) (str >> n)
 #define ROTR(str, n) ((str >> n) | (str << (32-n))) 
@@ -90,20 +81,25 @@ bool isprime(int n) { // O(n)
     return true;
 }
 
-string binarytoHex(string binary_string);
-string floattoBinary(float num);
-string decToHex(long double number);
+string computeHashValue(vector<unsigned long> messSched);
 vector<unsigned long> generateConstants(int count);
 vector<unsigned long> getMessageSched(string binary_string);
+string padMessage512(string binary_str)
+
+string binarytoHex(string binary_string);
+string floattoBinary(float num);
+string decToHex(long double number)
+string longtoHex(unsigned long input);
+
 
 
 // Step 5:
 //input messageSchedule: 512 bit message divided into 8 bit blocks
-string computeHashValue(vector<unsigned long> ms) {
+string computeHashValue(vector<unsigned long>& messSched, vector<unsigned long> k) {
 // what we use: 1) a message schedule of sixty-four 32 bit words, 2) eight working variables of 32
 // bits each, and 3) a hash value of 8 32 bit words
 
-vector<unsigned long> k = generateConstants(64); // move the constants generation to parameter
+ // move the constants generation to parameter
 
 
 //initialize constants
@@ -119,11 +115,11 @@ unsigned long h7 = 0x5be0cd19;
 //5b. Initialize array of 64 longs to 0
 <unsigned long> words[64] = {0};
 
-	for(int i = 0; i <= 15; i++)
+	for(int i = 0; i < 16; i++)
 	{
-		words[i] = ms[i] & 0xFFFFFFFF; //& with OxFFFFFFFF makes sure any bits over the 32 are zeroed out
+		words[i] = messSched[i] & 0xFFFFFFFF; //& with OxFFFFFFFF makes sure any bits over the 32 are zeroed out
     }
-	for(int i = 16; i <= 63; i++)
+	for(int i = 16; i < 64; i++)
 	{//NIST
 	    words[i] = sig2(words[i-2]) + words[i-7] + sig1(words[i-15]) + words[i-16];
 
@@ -144,59 +140,36 @@ unsigned long h7 = 0x5be0cd19;
 	unsigned long g = h6;
 	unsigned long h = h7;
 
-    for (int i = 0; i < 63; i ++) {     
+for (int i = 0; i < 64; i ++) {     
         temp1 = h + f2(e) + ch(e,f,g) + k[i] + words[i];
         temp2 = f1(a) + maj(a,b,c);
-        h = g
-        g = f
-        f = e
-        e = d + temp1
-        d = c
-        c = b
-        b = a
-        a = temp1 + temp2
+        h = g;
+        g = f;
+        f = e;
+        e = (d + temp1) & 0xFFFFFFFF;
+        d = c;
+        c = b;
+        b = a;
+        a = (temp1 + temp2) & 0xFFFFFFFF;
 
     }
-//     for i from 0 to 63
-// S1 = (e rightrotate 6) xor (e rightrotate 11) xor (e rightrotate 25) f1
-// ch = (e and f) xor ((not e) and g)
-// temp1 = h + S1 + ch + k[i] + w[i]
-// S0 = (a rightrotate 2) xor (a rightrotate 13) xor (a rightrotate 22) 
-// maj = (a and b) xor (a and c) xor (b and c)
-// temp2 := S0 + maj
-// h = g
-// g = f
-// f = e
-// e = d + temp1
-// d = c
-// c = b
-// b = a
-// a = temp1 + temp2
-
-return ;
-}
 
 //afterwards: 
-h0 = h0 + a 
-h1 = h1 + b 
-h2 = h2 + c 
-h3 = h3 + d 
-h4 = h4 + e 
-h5 = h5 + f 
-h6 = h6 + g
-h7 = h7 + h
-string show_as_hex(unsigned long input)
-{
-	bitset<32> bs(input);
-	unsigned n = bs.to_ulong();
+h0 = h0 + a;
+h1 = h1 + b;
+h2 = h2 + c;
+h3 = h3 + d;
+h4 = h4 + e; 
+h5 = h5 + f;
+h6 = h6 + g;
+h7 = h7 + h;
 
-	stringstream sstream;
-	sstream << std::hex << std::setw(8) << std::setfill('0') << n;
-	string temp;
-	sstream >> temp;
-
-	return temp;
+string res = longtoHex(h0) + longtoHex(h1) + longtoHex(h2) + longtoHex(h3) + longtoHex(h4) + longtoHex(h5)
+ + longtoHex(h6) + longtoHex(h7);
+return res;
 }
+
+
 
 //512 bit broken into blocks of 8-bit ASCII chars
 // we will use unsigned longs to compute the hash 
@@ -353,13 +326,14 @@ ss << hex << bits.to_ulong() << endl;
 return ss.str();
 
 }
-string longtoHex(unsigned long binarynum) { //pass around binary as strings, convert to and from bitset.
+string longtoHex(unsigned long input) { //pass around binary as strings, convert to and from bitset.
 // input: binary string
 // output: string of hex value 
-bitset<32> bits(binary_string);
+bitset<32> bits(input);
 stringstream ss;
 ss << hex << bits.to_ulong() << endl;
 return ss.str();
+
 
 }
 
@@ -414,12 +388,12 @@ int main() {
 string bin = "011010000110010101";
 string b2 = padMessage512(bin);
 
+vector<unsigned long> k = generateConstants(64);
 
-
-vector<string> k = generateConstants(64);
-for (auto i : k) {
-    cout << i << endl;
-}
+// vector<string> k = generateConstants(64);
+// for (auto i : k) {
+//     cout << i << endl;
+// }
 
 
 // displayShift(20);
