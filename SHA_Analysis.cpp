@@ -120,9 +120,12 @@ map<string, string> SHA2(map<string, string>& passwords, vector<unsigned long>& 
         // how many chunks there are in our binary string (1 chunch = 512 bits)
         chunks = binaryInput.length() / 512;
         // loop for every chunk
+        
         for (unsigned int i = 0; i < chunks; i++) {
             string chunkStr = binaryInput.substr(i * 512, (i+1) * 512);
+            cout <<  "============================================================================" << endl;
             cout << "binary: " << chunkStr << endl;
+        
 
         // step 5: create message schedule
             vector<unsigned long> blocks = getMessageSched(chunkStr);
@@ -135,6 +138,7 @@ map<string, string> SHA2(map<string, string>& passwords, vector<unsigned long>& 
             cout << "hash: " << hash << endl;
 
         }
+
     }
     return encrypted;
 }

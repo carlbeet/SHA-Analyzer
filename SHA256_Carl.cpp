@@ -84,7 +84,7 @@ bool isprime(int n) { // O(n)
 string computeHashValue(vector<unsigned long> messSched);
 vector<unsigned long> generateConstants(int count);
 vector<unsigned long> getMessageSched(string binary_string);
-string padMessage512(string binary_str)
+//string padMessage512(string binary_str);
 
 string binarytoHex(string binary_string);
 string floattoBinary(float num);
